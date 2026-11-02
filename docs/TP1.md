@@ -19,11 +19,11 @@ et vous savez lire un run GitHub Actions, y compris quand il échoue.
 
 ### Les commandes qui changent selon votre système
 
-| Action | macOS | Linux | Windows (PowerShell) |
-|---|---|---|---|
-| Créer l'environnement | `python3.12 -m venv .venv` | `python3 -m venv .venv` | `py -3.12 -m venv .venv` |
-| L'activer | `source .venv/bin/activate` | `source .venv/bin/activate` | `.venv\Scripts\Activate.ps1` |
-| Appeler l'API | `curl http://localhost:8000/health` | `curl http://localhost:8000/health` | `curl.exe http://localhost:8000/health` |
+| Action                | macOS                               | Linux                               | Windows (PowerShell)                    |
+| --------------------- | ----------------------------------- | ----------------------------------- | --------------------------------------- |
+| Créer l'environnement | `python3.12 -m venv .venv`          | `python3 -m venv .venv`             | `py -3.12 -m venv .venv`                |
+| L'activer             | `source .venv/bin/activate`         | `source .venv/bin/activate`         | `.venv\Scripts\Activate.ps1`            |
+| Appeler l'API         | `curl http://localhost:8000/health` | `curl http://localhost:8000/health` | `curl.exe http://localhost:8000/health` |
 
 Tout le reste (`git`, `gh`, `pytest`, `pip`) est identique sur les trois systèmes.
 
@@ -77,6 +77,8 @@ puis recommencez le `git push`.
 
 ---
 
+---
+
 ## Partie 3 : Casser, observer, réparer (45 min)
 
 1. Dans `app/logic.py`, modifiez volontairement `MAX_TITLE_LENGTH` (par exemple 5).
@@ -102,7 +104,7 @@ puis recommencez le `git push`.
 4. Ajoutez le badge de statut en haut du `README.md` :
 
 ```markdown
-![CI](https://github.com/<votre-compte>/tasks-api/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/alexismathieu-ui/tasks-api/actions/workflows/ci.yml/badge.svg)
 ```
 
 > 📸 **TP1-5 :** la pull request avec les vérifications (checks) vertes, avant la fusion.
