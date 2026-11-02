@@ -1,13 +1,17 @@
 name: CI
-on: [push]
+on: [push, pull_request]
 jobs:
   CI:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+      - name: Show Python version
+        run: python --version
       - name: Set up Python
         uses: actions/setup-python@v7
+        # - name: Fail intentionally
+        # run: exit 1
         with:
           python-version: 3.12
       - name: Install dependencies
