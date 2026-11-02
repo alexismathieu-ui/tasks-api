@@ -36,6 +36,6 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Run tests
         run: |
-          pytest
+          pytest --cov=app --cov-fail-under=80
 
 #This is not a useful comment
