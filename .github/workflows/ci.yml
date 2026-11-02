@@ -21,6 +21,19 @@ jobs:
         run: black --check .
 
   tests:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    - name: Show Python version
+      run: python --version
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: 3.12
+    - name: Install dependencies
+      run: |
+        pip install -r requirements-dev.txt
     - name: Run tests
       run: |
         pytest
