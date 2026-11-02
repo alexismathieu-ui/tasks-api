@@ -1,13 +1,12 @@
 name: hello
 on: [push]
 jobs:
-  build:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v2
-    - name: Run a one-line script
-      run: echo Coucou !
-    - name: Run a multi-line script
-      run: |
-        echo La Branche : ${{ github.ref_name }}
-        echo Auteur : ${{ github.actor }}
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run a one-line script
+        run: echo "Coucou !"
+      - name: Afficher la branche et l'auteur
+        run: |
+          echo "La Branche : ${{ github.ref_name }}"
+          echo "Auteur : ${{ github.actor }}"
