@@ -1,7 +1,7 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  CI:
+  lints:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -10,15 +10,19 @@ jobs:
         run: python --version
       - name: Set up Python
         uses: actions/setup-python@v7
-        # - name: Fail intentionally
-        # run: exit 1
         with:
           python-version: 3.12
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
-      - name: Run tests
-        run: |
-          pytest
+      - name: Run flake8
+        run: flake8 .
+      - name: Run black
+        run: black --check .
+
+  tests:
+    - name: Run tests
+      run: |
+        pytest
 
 #This is not a useful comment
