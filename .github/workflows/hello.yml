@@ -1,0 +1,12 @@
+name: hello
+on: [push]
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run a one-line script
+        run: echo "Coucou !"
+      - name: Afficher la branche et l'auteur
+        run: |
+          echo "La Branche : ${{ github.ref_name }}"
+          echo "Auteur : ${{ github.actor }}"
