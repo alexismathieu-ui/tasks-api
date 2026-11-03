@@ -40,6 +40,12 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Run test
         run: |
-          pytest --cov=app --cov-fail-under=80
+          pytest --cov=app --cov-fail-under=80 --cov-report=xml
+      - name: Upload coverage report
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage.xml
 
 #This is not useful
