@@ -1,17 +1,19 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Show Python version
-        run: python --version
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: 3.12
+          python-version: "3.12"
+          cache: pip
+      - name: Show Python version
+        run: python --version
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
@@ -28,17 +30,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
+          cache: pip
       - name: Show Python version
         run: python --version
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
-      - name: Run test
+      - name: Run tests
         run: |
           pytest --cov=app --cov-fail-under=80 --cov-report=xml
       - name: Upload coverage report
@@ -47,5 +49,3 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
-
-#This is not useful
