@@ -1,7 +1,7 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  lints:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,21 +20,25 @@ jobs:
       - name: Run black
         run: black --check .
 
-  tests:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Show Python version
-        run: python --version
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: 3.12
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Show Python version
+        run: python --version
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
-      - name: Run tests
+      - name: Run test
         run: |
           pytest --cov=app --cov-fail-under=80
 
