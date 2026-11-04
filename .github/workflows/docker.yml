@@ -27,6 +27,10 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      owner: ${{ steps.vars.outputs.owner }}
+      sha_tag: ${{ steps.vars.outputs.sha_tag }}
+      version: ${{ steps.vars.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -35,6 +39,7 @@ jobs:
         id: vars
         run: |
           echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+          echo "sha_tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
           else
@@ -69,3 +74,60 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             APP_VERSION=${{ steps.vars.outputs.version }}
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lancer l'image et faire le test de fumée (staging)
+        env:
+          IMAGE: ghcr.io/${{ needs.build.outputs.owner }}/tasks-api
+          TAG: ${{ needs.build.outputs.sha_tag }}
+        run: |
+          docker run -d --name tasks-api -p 8000:8000 "$IMAGE:$TAG"
+          for i in $(seq 1 15); do
+            curl -fsS http://localhost:8000/health && break
+            sleep 2
+          done
+          curl -fsS http://localhost:8000/health
+          curl -fsS http://localhost:8000/version
+
+  deploy-production:
+    needs: [build, deploy-staging]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lancer l'image de release et faire le test de fumée (production)
+        env:
+          IMAGE: ghcr.io/${{ needs.build.outputs.owner }}/tasks-api
+          TAG: ${{ needs.build.outputs.version }}
+        run: |
+          docker run -d --name tasks-api -p 8000:8000 "$IMAGE:$TAG"
+          for i in $(seq 1 15); do
+            curl -fsS http://localhost:8000/health && break
+            sleep 2
+          done
+          curl -fsS http://localhost:8000/health
+          curl -fsS http://localhost:8000/version
